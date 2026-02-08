@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!--
+    ==========================================================================
+    SSL CERTIFICATE CHECKER - Frontend Template
+    ==========================================================================
+    This template uses Jinja2 templating engine (built into Flask)
+    Key Jinja2 features used:
+    - {{ variable }} - Output a variable value
+    - {% if condition %} - Conditional rendering
+    - {% endif %} - End conditional block
+    ==========================================================================
+    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Check SSL/TLS certificate validity for any website domain">
+    <title>🔐 SSL Certificate Checker</title>
+
+    <!-- Link to external CSS file -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- Google Fonts for modern typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Main container with glassmorphism effect -->
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <div class="logo">🔐</div>
+            <h1>SSL Certificate Checker</h1>
+            <p class="subtitle">Verify the security of any website's SSL/TLS certificate</p>
+        </div>
+
+        <!-- Input Form Section -->
+        <form method="POST" action="/" class="search-form">
+            <div class="input-group">
+                <input type="text" name="domain" placeholder="Enter domain (e.g., google.com)"
+                    value="{{ cert_info.domain if cert_info and cert_info.domain else '' }}" autocomplete="off"
+                    autofocus required>
+                <button type="submit" class="check-btn">
+                    <span class="btn-icon">🔍</span>
+                    <span class="btn-text">Check SSL</span>
+                </button>
+            </div>
+        </form>
+
+        <!-- Results Section - Only shown when cert_info exists -->
+        {% if cert_info %}
+        {% if cert_info.error %}
+        <!-- Error Display -->
+        <div class="result-card error-card">
+            <div class="error-icon">⚠️</div>
+            <h3>Error</h3>
+            <p class="error-message">{{ cert_info.error }}</p>
+        </div>
+        {% else %}
+        <!-- Success - Certificate Details Display -->
+        <div class="result-card">
+            <!-- Status Badge -->
+            <div class="status-badge {{ cert_info.status_class }}">
+                {% if cert_info.status == 'VALID' %}
+                ✅ Certificate is VALID
+                {% else %}
+                ❌ Certificate is EXPIRED
+                {% endif %}
+            </div>
+
+            <!-- Certificate Details Grid -->
+            <div class="cert-details">
+                <div class="detail-item">
+                    <span class="detail-label">🌐 Domain</span>
+                    <span class="detail-value">{{ cert_info.domain }}</span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">📜 Issued To</span>
+                    <span class="detail-value">{{ cert_info.issued_to }}</span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">🏢 Issued By</span>
+                    <span class="detail-value">{{ cert_info.issued_by }}</span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">📅 Valid From</span>
+                    <span class="detail-value">{{ cert_info.valid_from }}</span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">📅 Valid Till</span>
+                    <span class="detail-value">{{ cert_info.valid_to }}</span>
+                </div>
+
+                <div class="detail-item highlight">
+                    <span class="detail-label">⏳ Days Remaining</span>
+                    <span class="detail-value days {{ 'warning' if cert_info.days_remaining < 30 else '' }}">
+                        {{ cert_info.days_remaining }} days
+                    </span>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endif %}
+
+        <!-- Footer Section -->
+        <footer class="footer">
+            <p>| SSL/TLS Security Tool |</p>
+        </footer>
+    </div>
+
+    <!-- Background decoration elements -->
+    <div class="bg-decoration">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+        <div class="circle circle-3"></div>
+    </div>
+</body>
+
+</html>
